@@ -1,48 +1,64 @@
-using DrinksMenuApp.Services;
 using DrinksMenuApp.Models;
+using DrinksMenuApp.Services;
 using Spectre.Console;
 
 public class Menu
 {
-    public async Task ShowMenu()
+    public void MenuTable()
     {
-        // AnsiConsole.Markup("[cyan]Welcome to the Cantina![/]");
-
-        /* string drink = AnsiConsole.Ask<string>("What drink?: ");
-        DrinksService ds = new DrinksService();
-
-        ApiResponse response = await ds.GetDrinksByCategory(drink);
-
-        foreach(var d in response.Drinks)
-        {
-            Console.WriteLine($"{d.idDrink} {d.strDrink} {d.strCategory}");
-        } */
-
         string colName = "Menu";
 
-        string[] choices = {"Ordinary Drinks", "Cocktail", "Milk / Float / Shake", "Other / Unknown", "Cocoa", "Shot", "Coffee / Tea", "Homemade Liqueur", "Punch / Party Drink", "Beer", "Soft Drink / Soda"};
+        string[] choices =
+        {
+            "Cocktail",
+            "Ordinary Drink",
+            "Punch / Party Drink",
+            "Shake",
+            "Other / Unknown",
+            "Cocoa",
+            "Shot",
+            "Coffee/Tea",
+            "Homemade Liqueur",
+            "Beer",
+            "Soft Drink",
+        };
 
         var table = new Table();
         table.AddColumns(colName);
 
-        foreach(var choice in choices)
+        foreach (var choice in choices)
         {
             table.AddRow(choice);
         }
 
         table.Border(TableBorder.Rounded);
-        table.Centered();
+        // table.Centered();
 
         AnsiConsole.Write(table);
+    }
 
-        // var option = AnsiConsole.Prompt(
-        //         new SelectionPrompt<string>().Title("What kind of drink are you looking for?").AddChoices(choices)
-        //         );
-        //
-        // Console.WriteLine($"Your option: {option}");
+    public async Task ShowMenu()
+    {
+        AnsiConsole.MarkupLine("[cyan]Welcome to the Cantina![/]");
+        MenuTable();
 
+        string category = AnsiConsole.Ask<string>("What category?: ");
+        string encodedCategory = Uri.EscapeDataString(category);
 
+        DrinksService ds = new DrinksService();
 
+        ApiResponse response = await ds.GetDrinksByCategory(encodedCategory);
 
+        if (response != null)
+        {
+            foreach (var d in response.Drinks)
+            {
+                Console.WriteLine($"{d.idDrink} {d.strDrink} {d.strCategory}");
+            }
+        } 
+        else 
+        {
+            AnsiConsole.MarkupLine("[red]Drink Category not found.[/]");
+        }
     }
 }
