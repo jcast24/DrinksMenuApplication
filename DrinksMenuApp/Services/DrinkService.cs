@@ -15,11 +15,11 @@ public class DrinksService : IDrinksService
 
     public async Task<string> LookupDrinkById()
     {
-
         string drinkId = AnsiConsole.Ask<string>("ID of the drink?: ");
         string url = $"https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i={drinkId}";
 
-        try {
+        try
+        {
             var response = await _httpClient.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
@@ -29,18 +29,17 @@ public class DrinksService : IDrinksService
                 // Deserialize the JSON
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 var drinkResponse = JsonSerializer.Deserialize<DrinkResponse>(json, options);
-                
                 if (drinkResponse != null)
                 {
-                    foreach(var drink in drinkResponse.Drinks)
+                    foreach (var drink in drinkResponse.Drinks)
                     {
-                        AnsiConsole.MarkupLine($"{drink.idDrink} {drink.strDrink} {drink.strCategory} {drink.strAlcoholic}");
+                        AnsiConsole.MarkupLine(
+                            $"{drink.idDrink} {drink.strDrink} {drink.strCategory} {drink.strAlcoholic}"
+                        );
                     }
                 }
-
             }
-                
-        } 
+        }
         catch (HttpRequestException e)
         {
             AnsiConsole.MarkupLine($"[red]Error: {e.Message} [/]");
@@ -48,7 +47,7 @@ public class DrinksService : IDrinksService
         return "Drink not found";
     }
 
-    public async Task ShowDrinks() 
+    public async Task ShowDrinks()
     {
         string category = AnsiConsole.Ask<string>("What category?: ");
         string encodedCategory = Uri.EscapeDataString(category);
@@ -57,17 +56,15 @@ public class DrinksService : IDrinksService
 
         if (response != null)
         {
-            foreach(var drink in response)
+            foreach (var drink in response)
             {
                 AnsiConsole.MarkupLine($"{drink.idDrink} {drink.strDrink} {drink.strCategory}");
             }
         }
-        else 
+        else
         {
             AnsiConsole.MarkupLine("[red]Drink category not found.[/]");
         }
-
-
     }
 
     public async Task<List<Drink>> GetDrinksByCategory(string category)
@@ -89,7 +86,7 @@ public class DrinksService : IDrinksService
 
                 return drinkResponse?.Drinks ?? new List<Drink>();
             }
-            else 
+            else
             {
                 AnsiConsole.WriteLine($"[red]No category found![/]");
                 return new List<Drink>();
