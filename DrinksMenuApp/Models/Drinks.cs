@@ -1,6 +1,6 @@
 namespace DrinksMenuApp.Models;
 
-public class ApiResponse
+public class DrinkResponse
 {
     public List<Drink> Drinks { get; set; } = new List<Drink>();
 }
