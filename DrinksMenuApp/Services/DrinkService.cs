@@ -29,10 +29,6 @@ public class DrinksService : IDrinksService
 
             await LookupDrinkById();
         }
-        else
-        {
-            AnsiConsole.MarkupLine("[red]Drink category not found.[/]");
-        }
     }
 
     public async Task<string> LookupDrinkById()
@@ -55,7 +51,9 @@ public class DrinksService : IDrinksService
                 {
                     foreach (var drink in drinkResponse.Drinks)
                     {
-                        AnsiConsole.WriteLine($"{drink.idDrink} {drink.strDrink} {drink.strCategory} {drink.strAlcoholic}");
+                        AnsiConsole.WriteLine(
+                            $"{drink.idDrink} {drink.strDrink} {drink.strCategory} {drink.strAlcoholic}"
+                        );
                     }
                 }
             }
@@ -79,12 +77,6 @@ public class DrinksService : IDrinksService
             {
                 string json = await response.Content.ReadAsStringAsync();
 
-                if (json.Contains("\"drinks\":null"))
-                {
-                    AnsiConsole.MarkupLine("[red]No category found.[/]");
-                    return new List<Drink>();
-                }
-
                 // Deserialize the JSON
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
@@ -103,9 +95,11 @@ public class DrinksService : IDrinksService
             Console.WriteLine($"Unexpected Error: {e.Message}");
             return new List<Drink>();
         }
-        catch (JsonException e)
+        catch (JsonException)
         {
-            Console.WriteLine($"[red]JSON parsing error: {e.Message}[/]");
+            AnsiConsole.MarkupLine("[red]No category found.[/]");
+            Menu m = new Menu();
+            await m.ShowMenu();
             return new List<Drink>();
         }
     }
