@@ -1,10 +1,9 @@
-using DrinksMenuApp.Models;
 using DrinksMenuApp.Services;
 using Spectre.Console;
 
 public class Menu
 {
-    public void MenuTable()
+    public void CategoryTable()
     {
         string colName = "Menu";
 
@@ -40,25 +39,8 @@ public class Menu
     public async Task ShowMenu()
     {
         AnsiConsole.MarkupLine("[cyan]Welcome to the Cantina![/]");
-        MenuTable();
-
-        string category = AnsiConsole.Ask<string>("What category?: ");
-        string encodedCategory = Uri.EscapeDataString(category);
-
         DrinksService ds = new DrinksService();
-
-        ApiResponse response = await ds.GetDrinksByCategory(encodedCategory);
-
-        if (response != null)
-        {
-            foreach (var d in response.Drinks)
-            {
-                Console.WriteLine($"{d.idDrink} {d.strDrink} {d.strCategory}");
-            }
-        } 
-        else 
-        {
-            AnsiConsole.MarkupLine("[red]Drink Category not found.[/]");
-        }
+        CategoryTable();
+        await ds.ShowDrinks(); 
     }
 }
