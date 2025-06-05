@@ -1,5 +1,15 @@
 namespace DrinksMenuApp.Models;
 
+public class Category
+{
+    public string StrCategory {get; set;}
+}
+
+public class CategoryResponse
+{
+    public List<Category> Drinks {get; set;}
+}
+
 public class DrinkResponse
 {
     public List<Drink>? Drinks { get; set; }
