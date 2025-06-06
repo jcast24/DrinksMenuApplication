@@ -1,9 +1,18 @@
-﻿namespace DrinksMenuApp;
+﻿using DrinksMenuApp.Services;
+using DrinksMenuApp.Visuals;
 
-class Program {
+namespace DrinksMenuApp;
+
+class Program
+{
     static async Task Main(string[] args)
     {
-        Menu menu = new Menu();
-        await menu.ShowMenu();
+        // Start of the project
+        Tables t = new Tables();
+        await t.CategoryTable();
+        
+        HttpClient hc = new HttpClient();
+        DrinkService ds = new DrinkService(hc);
+        await ds.OutputAllDrinksFromCategoryType();
     }
 }
