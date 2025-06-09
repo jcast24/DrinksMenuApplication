@@ -66,9 +66,8 @@ public class DrinkService : IDrinksService
     // Ask user which category of drink they would like to see more about
     public async Task<List<Drink>> GetAllDrinksByCategory()
     {
-        string category = AnsiConsole.Ask<string>(
-            "Enter the category that you would like to see: "
-        );
+        var category = await VerifyCategory();
+
         var url = $"https://www.thecocktaildb.com/api/json/v1/1/filter.php?c={category}";
 
         var response = await _httpClient.GetAsync(url);
@@ -82,7 +81,28 @@ public class DrinkService : IDrinksService
         var json = await response.Content.ReadAsStringAsync();
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var drinkResponse = JsonSerializer.Deserialize<DrinkResponse>(json, options);
-
+        
         return drinkResponse?.Drinks ?? new List<Drink>();
+    }
+    
+    // Verify the input from the user to see if they enter the right category. If not, ask again. 
+    public async Task<string> VerifyCategory()
+    {
+        List<string> validCategories = await GetCategories();
+        string chosenCategory;
+
+        while(true)
+        {
+            chosenCategory = AnsiConsole.Ask<string>("Enter a drink category: ");
+            if (validCategories.Contains(chosenCategory))
+            {
+                break;
+            }
+
+            AnsiConsole.MarkupLine($"[red]{chosenCategory} is not a valid category.[/]");
+        }
+
+        return chosenCategory;
+
     }
 }
