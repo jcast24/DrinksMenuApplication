@@ -1,5 +1,3 @@
-using DrinksMenuApp.Models;
-
 namespace DrinksMenuApp.Services;
 
 public interface IDrinksService
@@ -7,4 +5,5 @@ public interface IDrinksService
     Task<List<string>> GetCategories();
     Task OutputDataFromGetCategories();
     Task OutputAllDrinksFromCategoryType();
+    Task<string> VerifyCategory();
 }
