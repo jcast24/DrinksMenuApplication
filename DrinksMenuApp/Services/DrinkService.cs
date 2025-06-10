@@ -18,10 +18,6 @@ public class DrinkService : IDrinksService
     // and output the data
     public async Task OutputDataFromGetCategories()
     {
-        /* var httpClient = new HttpClient();
-
-        var testClass = new DrinkService(httpClient); */
-
         var categories = await GetCategories();
 
         foreach (var category in categories)
@@ -81,17 +77,41 @@ public class DrinkService : IDrinksService
         var json = await response.Content.ReadAsStringAsync();
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var drinkResponse = JsonSerializer.Deserialize<DrinkResponse>(json, options);
-        
         return drinkResponse?.Drinks ?? new List<Drink>();
     }
-    
-    // Verify the input from the user to see if they enter the right category. If not, ask again. 
+
+    /* public async Task<string> VerifyId()
+    {
+        var drinksList = await GetAllDrinksByCategory();
+        
+        List<string> newList = [];
+
+        foreach(var drink in drinksList)
+        {
+            newList.Add(drink.idDrink!);
+        }
+
+        string chosenId;
+
+        while(true) 
+        {
+            chosenId = AnsiConsole.Ask<string>("Enter the id of a drink: ");
+            if (newList.Contains(chosenId))
+            {
+                break;
+            }
+            AnsiConsole.MarkupLine($"[red]{chosenId} is not a valid id.[/]");
+        }
+        return chosenId;
+    } */
+
+    // Verify the input from the user to see if they enter the right category. If not, ask again.
     public async Task<string> VerifyCategory()
     {
         List<string> validCategories = await GetCategories();
         string chosenCategory;
 
-        while(true)
+        while (true)
         {
             chosenCategory = AnsiConsole.Ask<string>("Enter a drink category: ");
             if (validCategories.Contains(chosenCategory))
@@ -101,8 +121,40 @@ public class DrinkService : IDrinksService
 
             AnsiConsole.MarkupLine($"[red]{chosenCategory} is not a valid category.[/]");
         }
-
         return chosenCategory;
+    }
 
+    public async Task<List<Drink>> GetFullDrinkDetailsById()
+    {
+        string id = AnsiConsole.Ask<string>("Enter id of drink: ");
+        // string id = await VerifyId();
+        var url = $"https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i={id}";
+
+        var response = await _httpClient.GetAsync(url);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine($"Error fetching drink by id {id}");
+            return new List<Drink>();
+        }
+
+        var json = await response.Content.ReadAsStringAsync();
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var drinkResponse = JsonSerializer.Deserialize<DrinkResponse>(json, options);
+
+        return drinkResponse?.Drinks!;
+    }
+
+    // Outputs the details of the drinks based on the id
+    public async Task OutputFullDrinkDetails()
+    {
+        var drinks = await GetFullDrinkDetailsById();
+        foreach (var drink in drinks)
+        {
+            Console.WriteLine($"{drink.strDrink}");
+            Console.WriteLine($"{drink.strCategory}");
+            Console.WriteLine($"{drink.strAlcoholic}");
+            Console.WriteLine($"{drink.strInstructions}");
+        }
     }
 }
