@@ -1,5 +1,6 @@
 ﻿using DrinksMenuApp.Services;
 using DrinksMenuApp.Visuals;
+using Spectre.Console;
 
 namespace DrinksMenuApp;
 
@@ -9,10 +10,14 @@ class Program
     {
         // Start of the project
         Tables t = new Tables();
-        await t.CategoryTable();
+        t.CategoryTable();
         
         HttpClient hc = new HttpClient();
-        DrinkService ds = new DrinkService(hc);
+
+        string category = AnsiConsole.Ask<string>("Please enter a category: ");
+        DrinkService ds = new DrinkService(hc, category);
+
+
         await ds.OutputAllDrinksFromCategoryType();
         await ds.OutputFullDrinkDetails();
     }
