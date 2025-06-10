@@ -1,16 +1,23 @@
 using Spectre.Console;
-using DrinksMenuApp.Services;
-using DrinksMenuApp.Models;
 namespace DrinksMenuApp.Visuals;
 
 public class Tables
 {
-    public async Task CategoryTable()
+    public void CategoryTable()
     {
-        var httpClient = new HttpClient();
-        DrinkService ds = new DrinkService(httpClient);
-
-        var categories = await ds.GetCategories();
+        string[] categories = {
+            "Cocktail",
+            "Ordinary Drink",
+            "Punch / Party Drink",
+            "Shake",
+            "Other / Unknown",
+            "Cocoa", 
+            "Shot",
+            "Coffee / Tea",
+            "Homemade Liqueur",
+            "Beer",
+            "Soft Drink"
+        };
 
         string colName = "Menu";
 
@@ -27,5 +34,4 @@ public class Tables
         table.Title("[Cyan]Welcome to the Cantina![/]");
         AnsiConsole.Write(table);
     }
-
 }
