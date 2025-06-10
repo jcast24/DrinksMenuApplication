@@ -14,5 +14,6 @@ class Program
         HttpClient hc = new HttpClient();
         DrinkService ds = new DrinkService(hc);
         await ds.OutputAllDrinksFromCategoryType();
+        await ds.OutputFullDrinkDetails();
     }
 }
