@@ -1,13 +1,13 @@
 using System.Text.Json;
 using DrinksMenuApp.Models;
 using Spectre.Console;
-
+using DrinksMenuApp.Visuals;
 namespace DrinksMenuApp.Services;
 
 public class DrinkService : IDrinksService
 {
     private readonly HttpClient _httpClient;
-    private string _category;
+    private readonly string _category;
 
     public DrinkService(HttpClient httpClient, string category)
     {
@@ -107,13 +107,11 @@ public class DrinkService : IDrinksService
     // Outputs the details of the drinks based on the id
     public async Task OutputFullDrinkDetails()
     {
+
         var drinks = await GetFullDrinkDetailsById();
         foreach (var drink in drinks)
         {
-            Console.WriteLine($"{drink.strDrink}");
-            Console.WriteLine($"{drink.strCategory}");
-            Console.WriteLine($"{drink.strAlcoholic}");
-            Console.WriteLine($"{drink.strInstructions}");
+            Tables.DrinkDetails(drink.strDrink!, drink.strCategory!, drink.strAlcoholic!, drink.strInstructions!);
         }
     }
     
